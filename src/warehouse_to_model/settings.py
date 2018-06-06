@@ -75,6 +75,7 @@ class Testing(Default):
     """Testing environment configuration."""
 
     def __init__(self, **kwargs):
+        """Initialize the testing environment configuration."""
         super().__init__(**kwargs)
         self.TESTING = True
 

@@ -21,6 +21,8 @@ from warehouse_to_model.app import app
 
 
 class HelloWorld(Resource):
+    """Example API resource."""
+
     def get(self):
         """Shout out loud."""
         app.logger.debug("I ran!")
