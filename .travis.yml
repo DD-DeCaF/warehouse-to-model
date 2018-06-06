@@ -24,6 +24,9 @@ script:
   - make pipenv-check
   - make test-travis
 
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
 before_deploy:
   - ./scripts/install_gcloud.sh
   - ./scripts/install_kubectl.sh

@@ -62,9 +62,7 @@ test:
 
 ## Run the tests and report coverage (see https://docs.codecov.io/docs/testing-with-docker).
 test-travis:
-	$(eval ci_env=$(shell bash <(curl -s https://codecov.io/env)))
-	docker-compose run --rm -e ENVIRONMENT=testing $(ci_env)  web \
-		/bin/sh -c "pytest -s --cov=src/warehouse_to_model tests && codecov"
+	docker-compose run --rm -e ENVIRONMENT=testing -v "$$PWD/codecov:/codecov" web /bin/sh -c "pytest -s --cov=src/warehouse_to_model tests && mv .coverage /codecov"
 
 ## Stop all services.
 stop:
