@@ -1,0 +1,29 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: warehouse-to-model-production
+spec:
+  selector:
+    app: warehouse-to-model
+    env: production
+  ports:
+  - name: web
+    protocol: TCP
+    port: 80
+    targetPort: 8000
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: warehouse-to-model-staging
+spec:
+  selector:
+    app: warehouse-to-model
+    env: staging
+  ports:
+  - name: web
+    protocol: TCP
+    port: 80
+    targetPort: 8000
