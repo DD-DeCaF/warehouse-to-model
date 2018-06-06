@@ -86,10 +86,8 @@ class Production(Default):
         """
         Initialize the production environment configuration.
 
-        Require a secret key to be defined and make logging slightly less
-        verbose.
+        Require a secret key to be defined.
         """
         super().__init__()
         self.DEBUG = False
         self.SECRET_KEY = os.environ['SECRET_KEY']
-        self.LOGGING['root']['level'] = 'INFO'
