@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: gcr.io/dd-decaf-cfbf6/warehouse-to-model/warehouse-to-model:master
+        image: gcr.io/dd-decaf-cfbf6/warehouse-to-model:master
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
@@ -60,7 +60,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: gcr.io/dd-decaf-cfbf6/warehouse-to-model/warehouse-to-model:devel
+        image: gcr.io/dd-decaf-cfbf6/warehouse-to-model:devel
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
