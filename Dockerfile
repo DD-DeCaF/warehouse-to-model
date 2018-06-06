@@ -27,7 +27,7 @@ COPY Pipfile* "${CWD}/"
 RUN set -x \
     && ln -sf /usr/local/bin/python /bin/python \
     && apk add --no-cache --virtual .build-deps g++ \
-    && pip install --upgrade pip setuptools wheel pipenv \
+    && pip install --upgrade pip setuptools wheel pipenv==11.10.0 \
     && pipenv install --system --dev --deploy \
     && rm -rf /root/.cache/pip \
     && apk del .build-deps
