@@ -28,7 +28,8 @@ class Experiments(Resource):
     @forward_jwt
     def get(self, session):
         """Retrieve accessible experiments from the data warehouse."""
-        return session.get(f"{app.config['WAREHOUSE_API']}/experiments").json()
+        response = session.get(f"{app.config['WAREHOUSE_API']}/experiments").json()
+        return response.json(), response.status_code
 
 
 @api.route('/organisms')
@@ -38,4 +39,5 @@ class Organisms(Resource):
     @forward_jwt
     def get(self, session):
         """Retrieve accessible organisms from the data warehouse."""
-        return session.get(f"{app.config['WAREHOUSE_API']}/organisms").json()
+        response = session.get(f"{app.config['WAREHOUSE_API']}/organisms").json()
+        return response.json(), response.status_code
