@@ -17,13 +17,10 @@
 
 from flask_restplus import Resource
 
-from warehouse_to_model.app import app
+from warehouse_to_model.app import api, app
 
 
-class HelloWorld(Resource):
-    """Example API resource."""
-
+@api.route('/experiments')
+class Experiments(Resource):
     def get(self):
-        """Shout out loud."""
-        app.logger.debug("I ran!")
-        return "Hello World!"
+        return requests.get(f"{app.config['WAREHOUSE_API']}/experiments").json()
