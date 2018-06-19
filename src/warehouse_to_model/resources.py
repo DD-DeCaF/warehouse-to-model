@@ -18,9 +18,11 @@
 from flask_restplus import Resource
 
 from warehouse_to_model.app import api, app
+from warehouse_to_model.decorators import forward_jwt
 
 
 @api.route('/experiments')
 class Experiments(Resource):
-    def get(self):
-        return requests.get(f"{app.config['WAREHOUSE_API']}/experiments").json()
+    @forward_jwt
+    def get(self, session):
+        return session.get(f"{app.config['WAREHOUSE_API']}/experiments").json()
