@@ -32,6 +32,17 @@ class Experiments(Resource):
         return response.json(), response.status_code
 
 
+@api.route('/experiments/<int:id>/samples')
+class ExperimentSamples(Resource):
+    """Experiment Samples API resource."""
+
+    @forward_jwt
+    def get(self, id, session):
+        """Retrieve accessible experiments from the data warehouse."""
+        response = session.get(f"{app.config['WAREHOUSE_API']}/experiments/{id}/samples")
+        return response.json(), response.status_code
+
+
 @api.route('/organisms')
 class Organisms(Resource):
     """Organism API resource."""
