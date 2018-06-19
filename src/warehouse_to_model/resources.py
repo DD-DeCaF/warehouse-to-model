@@ -52,3 +52,45 @@ class Organisms(Resource):
         """Retrieve accessible organisms from the data warehouse."""
         response = session.get(f"{app.config['WAREHOUSE_API']}/organisms").json()
         return response.json(), response.status_code
+
+
+@api.route('/sample/<int:id>/info')
+class SampleInfo(Resource):
+    """Sample info API resource."""
+
+    @forward_jwt
+    def get(self, id, session):
+        """Information about measurements, medium and genotype changes for the given list of samples."""
+        # Get the sample in question
+        response = session.get(f"{app.config['WAREHOUSE_API']}/samples/{id}")
+        response.raise_for_status()
+        sample = response.json()
+
+        # Get genotype changes: Collect all genotype changes in the strain lineage
+        def iterate_strain(genotype, strain_id):
+            # FIXME: n+1 requests
+            response = session.get(f"{app.config['WAREHOUSE_API']}/strains/{strain_id}")
+            response.raise_for_status()
+            strain = response.json()
+            genotype = f"{genotype} {strain['genotype']}"
+            if strain['parent_id'] is None:
+                return genotype
+            else:
+                return iterate_strain(genotype, strain['parent_id'])
+        genotype_changes = iterate_strain("", sample['strain_id'])
+
+        # Get measurements
+        response = session.get(f"{app.config['WAREHOUSE_API']}/samples/{sample['id']}/measurements")
+        response.raise_for_status()
+        measurements = response.json()
+
+        # Get medium
+        response = session.get(f"{app.config['WAREHOUSE_API']}/media/{sample['medium_id']}")
+        response.raise_for_status()
+        medium = response.json()
+
+        return {
+            'genotype-changes': genotype_changes,
+            'measurements': measurements,
+            'medium': medium['compounds'],
+        }
