@@ -47,6 +47,7 @@ class Default:
         self.DEBUG = True
         self.SECRET_KEY = os.urandom(24)
         self.BUNDLE_ERRORS = True
+        self.SERVICE_URL = '/warehouse-to-model'
         self.CORS_ORIGINS = os.environ['ALLOWED_ORIGINS'].split(",")
         self.SENTRY_DSN = os.environ.get('SENTRY_DSN')
         self.LOGGING = {

@@ -48,6 +48,8 @@ def init_app(application, interface):
 
     # Add routes and resources.
     from warehouse_to_model import resources
+    interface.prefix = application.config['SERVICE_URL']
+    interface._doc = f"{application.config['SERVICE_URL']}/"
     interface.add_resource(resources.HelloWorld, "/")
     interface.init_app(application)
 
