@@ -30,7 +30,6 @@ def forward_jwt(f):
 
     Use this session only with internal HTTP services.
     """
-
     @wraps(f)
     def wrap(*args, **kwargs):
         session = requests.Session()
