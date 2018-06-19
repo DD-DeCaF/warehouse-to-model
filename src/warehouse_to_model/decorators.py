@@ -15,8 +15,8 @@
 
 from functools import wraps
 
-from flask import request
 import requests
+from flask import request
 
 
 def forward_jwt(f):
