@@ -53,5 +53,10 @@ def init_app(application, interface):
     interface.add_resource(resources.HelloWorld, "/")
     interface.init_app(application)
 
+    # Redirect requests for the root url to the service url
+    @application.route("/")
+    def root_redirect():
+        return redirect(f"{application.config['SERVICE_URL']}")
+
     # Add CORS information for all resources.
     CORS(application)
