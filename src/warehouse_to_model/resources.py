@@ -23,6 +23,9 @@ from warehouse_to_model.decorators import forward_jwt
 
 @api.route('/experiments')
 class Experiments(Resource):
+    """Retrieve accessible experiments from the data warehouse."""
+
     @forward_jwt
     def get(self, session):
+        """Get experiments."""
         return session.get(f"{app.config['WAREHOUSE_API']}/experiments").json()

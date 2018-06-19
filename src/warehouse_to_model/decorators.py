@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Decorators."""
+
 from functools import wraps
 
 import requests
