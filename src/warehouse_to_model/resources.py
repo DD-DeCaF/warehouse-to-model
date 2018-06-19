@@ -29,3 +29,13 @@ class Experiments(Resource):
     def get(self, session):
         """Get experiments."""
         return session.get(f"{app.config['WAREHOUSE_API']}/experiments").json()
+
+
+@api.route('/organisms')
+class Organisms(Resource):
+    """Retrieve accessible organisms from the data warehouse."""
+
+    @forward_jwt
+    def get(self, session):
+        """Get organisms."""
+        return session.get(f"{app.config['WAREHOUSE_API']}/organisms").json()
