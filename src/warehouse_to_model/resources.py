@@ -23,19 +23,19 @@ from warehouse_to_model.decorators import forward_jwt
 
 @api.route('/experiments')
 class Experiments(Resource):
-    """Retrieve accessible experiments from the data warehouse."""
+    """Experiment API resource."""
 
     @forward_jwt
     def get(self, session):
-        """Get experiments."""
+        """Retrieve accessible experiments from the data warehouse."""
         return session.get(f"{app.config['WAREHOUSE_API']}/experiments").json()
 
 
 @api.route('/organisms')
 class Organisms(Resource):
-    """Retrieve accessible organisms from the data warehouse."""
+    """Organism API resource."""
 
     @forward_jwt
     def get(self, session):
-        """Get organisms."""
+        """Retrieve accessible organisms from the data warehouse."""
         return session.get(f"{app.config['WAREHOUSE_API']}/organisms").json()
