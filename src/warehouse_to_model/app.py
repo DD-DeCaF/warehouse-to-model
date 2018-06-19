@@ -18,7 +18,7 @@
 import logging
 import logging.config
 
-from flask import Flask
+from flask import Flask, redirect
 from flask_cors import CORS
 from flask_restplus import Api
 from raven.contrib.flask import Sentry
