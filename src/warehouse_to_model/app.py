@@ -35,15 +35,8 @@ api = Api(
 
 def init_app(application, interface):
     """Initialize the main app with config information and routes."""
-    if os.environ["ENVIRONMENT"] == "production":
-        from warehouse_to_model.settings import Production
-        application.config.from_object(Production())
-    elif os.environ["ENVIRONMENT"] == "testing":
-        from warehouse_to_model.settings import Testing
-        application.config.from_object(Testing())
-    else:
-        from warehouse_to_model.settings import Development
-        application.config.from_object(Development())
+    from .settings import current_config
+    application.config.from_object(current_config())
 
     # Configure logging
     logging.config.dictConfig(application.config['LOGGING'])
