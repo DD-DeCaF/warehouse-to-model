@@ -50,6 +50,7 @@ class Default:
         self.SERVICE_URL = '/warehouse-to-model'
         self.CORS_ORIGINS = os.environ['ALLOWED_ORIGINS'].split(",")
         self.SENTRY_DSN = os.environ.get('SENTRY_DSN')
+        self.WAREHOUSE_API = os.environ['WAREHOUSE_API']
         self.LOGGING = {
             'version': 1,
             'disable_existing_loggers': False,
