@@ -47,7 +47,6 @@ def init_app(application, interface):
         sentry.init_app(application)
 
     # Add routes and resources.
-    from warehouse_to_model import resources
     interface.prefix = application.config['SERVICE_URL']
     interface._doc = f"{application.config['SERVICE_URL']}/"
     interface.init_app(application)
