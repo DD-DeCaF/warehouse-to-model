@@ -32,7 +32,8 @@ class Experiments(Resource):
     @forward_jwt
     def get(self, session):
         """Retrieve accessible experiments from the data warehouse."""
-        response = session.get(f"{app.config['WAREHOUSE_API']}/experiments").json()
+        response = session.get(
+            f"{app.config['WAREHOUSE_API']}/experiments").json()
         return response.json(), response.status_code
 
 
@@ -43,7 +44,8 @@ class ExperimentSamples(Resource):
     @forward_jwt
     def get(self, experiment_id, session):
         """Retrieve accessible experiments from the data warehouse."""
-        response = session.get(f"{app.config['WAREHOUSE_API']}/experiments/{experiment_id}/samples")
+        response = session.get(f"{app.config['WAREHOUSE_API']}/experiments/"
+                               "{experiment_id}/samples")
         return response.json(), response.status_code
 
 
@@ -54,7 +56,8 @@ class Organisms(Resource):
     @forward_jwt
     def get(self, session):
         """Retrieve accessible organisms from the data warehouse."""
-        response = session.get(f"{app.config['WAREHOUSE_API']}/organisms").json()
+        response = session.get(
+            f"{app.config['WAREHOUSE_API']}/organisms").json()
         return response.json(), response.status_code
 
 
@@ -64,9 +67,15 @@ class SampleInfo(Resource):
 
     @forward_jwt
     def get(self, sample_id, session):
-        """Information about measurements, medium and genotype changes for the given list of samples."""
+        """
+        Information about changes for the given sample.
+
+        Returns changes to the measurements, medium and genotype for the given
+        sample.
+        """
         # Get the sample in question
-        response = session.get(f"{app.config['WAREHOUSE_API']}/samples/{sample_id}")
+        response = session.get(
+            f"{app.config['WAREHOUSE_API']}/samples/{sample_id}")
         response.raise_for_status()
         sample = response.json()
 
@@ -79,14 +88,20 @@ class SampleSimulate(Resource):
 
     @forward_jwt
     def post(self, sample_id, session):
-        """Apply the changes from the given sample to the given model and return the modified model with fluxes."""
+        """
+        Simulate fluxes for the given sample.
+
+        Apply the changes from the given sample to the given model and return
+        the modified model with fluxes.
+        """
         try:
             model_id = request.json['model_id']
         except KeyError:
             return {'error': "Key 'model_id' missing from JSON body"}, 400
 
         # Get the sample in question
-        response = session.get(f"{app.config['WAREHOUSE_API']}/samples/{sample_id}")
+        response = session.get(
+            f"{app.config['WAREHOUSE_API']}/samples/{sample_id}")
         response.raise_for_status()
         sample = response.json()
 
@@ -96,25 +111,36 @@ class SampleSimulate(Resource):
             message['objective'] = request.json['objective']
 
         payload = {'message': message}
-        response = session.post(f"{app.config['MODEL_API']}/models/{model_id}", data=json.dumps(payload))
+        response = session.post(f"{app.config['MODEL_API']}/models/{model_id}",
+                                data=json.dumps(payload))
         return response.json(), response.status_code
 
 
 @api.route('/sample/<int:sample_id>/simulate/yields')
 class SampleYields(Resource):
-    """API resource for calculating theoretical maximum yields for the given sample."""
+    """API resource for calculating TMY."""
 
     @forward_jwt
     def post(self, sample_id, session):
-        """Apply the changes from the given sample to the given model and return the theoretical maximum yields."""
+        """
+        Return theoretical maximum yields for the given sample.
+
+        Apply the changes from the given sample to the given model and return
+        the theoretical maximum yields for the compount measurements in that
+        sample.
+        """
         # Get the sample in question
-        response = session.get(f"{app.config['WAREHOUSE_API']}/samples/{sample_id}")
+        response = session.get(
+            f"{app.config['WAREHOUSE_API']}/samples/{sample_id}")
         response.raise_for_status()
         sample = response.json()
 
         message = get_sample_changes(session, sample)
         message['to-return'] = ['tmy']
-        message['theoretical-objectives'] = [m['id'] for m in message['measurements']],  # TODO: chebi ids
+        message['theoretical-objectives'] = [
+            m['id'] for m in message['measurements']],  # TODO: chebi ids
         payload = {'message': message}
-        response = session.post(f"{app.config['MODEL_API']}/models/{request.json['model_id']}", data=json.dumps(payload))
+        response = session.post(f"{app.config['MODEL_API']}/models/"
+                                "{request.json['model_id']}",
+                                data=json.dumps(payload))
         return response.json(), response.status_code

@@ -20,7 +20,10 @@ from warehouse_to_model.app import app
 
 def get_sample_changes(session, sample):
     """
-    Return the changes (measurements, medium and genotype changes) for the given sample.
+    Return the changes for the given sample.
+
+    Return the changes (measurements, medium and genotype changes) for the given
+    sample.
 
     :param session: A requests session with authentication details prepared
     :param sample: A dict structure of a warehouse sample
@@ -29,7 +32,8 @@ def get_sample_changes(session, sample):
     # Get genotype changes: Collect all genotype changes in the strain lineage
     def iterate_strain(genotype, strain_id):
         # FIXME: n+1 requests
-        response = session.get(f"{app.config['WAREHOUSE_API']}/strains/{strain_id}")
+        response = session.get(
+            f"{app.config['WAREHOUSE_API']}/strains/{strain_id}")
         response.raise_for_status()
         strain = response.json()
         genotype = f"{genotype} {strain['genotype']}"
@@ -40,12 +44,14 @@ def get_sample_changes(session, sample):
     genotype_changes = iterate_strain("", sample['strain_id'])
 
     # Get measurements
-    response = session.get(f"{app.config['WAREHOUSE_API']}/samples/{sample['id']}/measurements")
+    response = session.get(
+        f"{app.config['WAREHOUSE_API']}/samples/{sample['id']}/measurements")
     response.raise_for_status()
     measurements = response.json()
 
     # Get medium
-    response = session.get(f"{app.config['WAREHOUSE_API']}/media/{sample['medium_id']}")
+    response = session.get(
+        f"{app.config['WAREHOUSE_API']}/media/{sample['medium_id']}")
     response.raise_for_status()
     medium = response.json()
 
