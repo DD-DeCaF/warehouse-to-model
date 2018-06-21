@@ -80,6 +80,11 @@ class SampleSimulate(Resource):
     @forward_jwt
     def post(self, sample_id, session):
         """Apply the changes from the given sample to the given model and return the modified model with fluxes."""
+        try:
+            model_id = request.json['model_id']
+        except KeyError:
+            return {'error': "Key 'model_id' missing from JSON body"}, 400
+
         # Get the sample in question
         response = session.get(f"{app.config['WAREHOUSE_API']}/samples/{sample_id}")
         response.raise_for_status()
@@ -91,5 +96,5 @@ class SampleSimulate(Resource):
             message['objective'] = request.json['objective']
 
         payload = {'message': message}
-        response = session.post(f"{app.config['MODEL_API']}/models/{request.json['model_id']}", data=json.dumps(payload))
+        response = session.post(f"{app.config['MODEL_API']}/models/{model_id}", data=json.dumps(payload))
         return response.json(), response.status_code
