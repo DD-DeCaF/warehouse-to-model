@@ -46,15 +46,8 @@ def init_app(application, interface):
                         level=logging.ERROR)
         sentry.init_app(application)
 
-    # Add routes and resources.
-    interface.prefix = application.config['SERVICE_URL']
-    interface._doc = f"{application.config['SERVICE_URL']}/"
+    # Initialize the API
     interface.init_app(application)
-
-    # Redirect requests for the root url to the service url
-    @application.route("/")
-    def root_redirect():
-        return redirect(f"{application.config['SERVICE_URL']}")
 
     # Add CORS information for all resources.
     CORS(application)
