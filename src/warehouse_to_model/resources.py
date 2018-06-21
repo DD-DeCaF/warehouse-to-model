@@ -98,3 +98,23 @@ class SampleSimulate(Resource):
         payload = {'message': message}
         response = session.post(f"{app.config['MODEL_API']}/models/{model_id}", data=json.dumps(payload))
         return response.json(), response.status_code
+
+
+@api.route('/sample/<int:sample_id>/simulate/yields')
+class SampleYields(Resource):
+    """API resource for calculating theoretical maximum yields for the given sample."""
+
+    @forward_jwt
+    def post(self, sample_id, session):
+        """Apply the changes from the given sample to the given model and return the theoretical maximum yields."""
+        # Get the sample in question
+        response = session.get(f"{app.config['WAREHOUSE_API']}/samples/{sample_id}")
+        response.raise_for_status()
+        sample = response.json()
+
+        message = get_sample_changes(session, sample)
+        message['to-return'] = ['tmy']
+        message['theoretical-objectives'] = [m['id'] for m in message['measurements']],  # TODO: chebi ids
+        payload = {'message': message}
+        response = session.post(f"{app.config['MODEL_API']}/models/{request.json['model_id']}", data=json.dumps(payload))
+        return response.json(), response.status_code
