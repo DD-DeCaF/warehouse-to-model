@@ -15,6 +15,9 @@
 
 """Implement RESTful API endpoints using resources."""
 
+import json
+
+from flask import request
 from flask_restplus import Resource
 
 from warehouse_to_model.app import api, app
@@ -32,14 +35,14 @@ class Experiments(Resource):
         return response.json(), response.status_code
 
 
-@api.route('/experiments/<int:id>/samples')
+@api.route('/experiments/<int:experiment_id>/samples')
 class ExperimentSamples(Resource):
     """Experiment Samples API resource."""
 
     @forward_jwt
-    def get(self, id, session):
+    def get(self, experiment_id, session):
         """Retrieve accessible experiments from the data warehouse."""
-        response = session.get(f"{app.config['WAREHOUSE_API']}/experiments/{id}/samples")
+        response = session.get(f"{app.config['WAREHOUSE_API']}/experiments/{experiment_id}/samples")
         return response.json(), response.status_code
 
 
@@ -54,15 +57,15 @@ class Organisms(Resource):
         return response.json(), response.status_code
 
 
-@api.route('/sample/<int:id>/info')
+@api.route('/sample/<int:sample_id>/info')
 class SampleInfo(Resource):
     """Sample info API resource."""
 
     @forward_jwt
-    def get(self, id, session):
+    def get(self, sample_id, session):
         """Information about measurements, medium and genotype changes for the given list of samples."""
         # Get the sample in question
-        response = session.get(f"{app.config['WAREHOUSE_API']}/samples/{id}")
+        response = session.get(f"{app.config['WAREHOUSE_API']}/samples/{sample_id}")
         response.raise_for_status()
         sample = response.json()
 
@@ -94,3 +97,52 @@ class SampleInfo(Resource):
             'measurements': measurements,
             'medium': medium['compounds'],
         }
+
+
+@api.route('/sample/<int:sample_id>/simulate')
+class SampleSimulate(Resource):
+    """API resource for simulating fluxes for the given sample."""
+
+    @forward_jwt
+    def post(self, sample_id, session):
+        """Apply the changes from the given sample to the given model and return the modified model with fluxes."""
+        # Get the sample in question
+        response = session.get(f"{app.config['WAREHOUSE_API']}/samples/{sample_id}")
+        response.raise_for_status()
+        sample = response.json()
+
+        # Get genotype changes: Collect all genotype changes in the strain lineage
+        def iterate_strain(genotype, strain_id):
+            # FIXME: n+1 requests
+            response = session.get(f"{app.config['WAREHOUSE_API']}/strains/{strain_id}")
+            response.raise_for_status()
+            strain = response.json()
+            genotype = f"{genotype} {strain['genotype']}".strip()
+            if strain['parent_id'] is None:
+                return genotype
+            else:
+                return iterate_strain(genotype, strain['parent_id'])
+        genotype_changes = iterate_strain("", sample['strain_id'])
+
+        # Get measurements
+        response = session.get(f"{app.config['WAREHOUSE_API']}/samples/{sample['id']}/measurements")
+        response.raise_for_status()
+        measurements = response.json()
+
+        # Get medium
+        response = session.get(f"{app.config['WAREHOUSE_API']}/media/{sample['medium_id']}")
+        response.raise_for_status()
+        medium = response.json()
+
+        message = {
+            'genotype-changes': genotype_changes,
+            'measurements': measurements,
+            'medium': medium['compounds'],
+        }
+
+        if 'objective' in request.json:
+            message['objective'] = request.json['objective']
+
+        payload = {'message': message}
+        response = session.post(f"{app.config['MODEL_API']}/models/{request.json['model_id']}", data=json.dumps(payload))
+        return response.json(), response.status_code

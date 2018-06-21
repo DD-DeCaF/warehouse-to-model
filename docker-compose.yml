@@ -20,6 +20,7 @@ services:
       - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:*}
       - SENTRY_DSN=${SENTRY_DSN}
       - WAREHOUSE_API=${WAREHOUSE_API:-http://warehouse:8000}
+      - MODEL_API=${MODEL_API:-http://model:8000}
     command: gunicorn -c gunicorn.py warehouse_to_model.wsgi:app
 
 # Additional services that the `web` service `depends_on` should usually only
