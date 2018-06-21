@@ -22,6 +22,7 @@ from flask_restplus import Resource
 
 from warehouse_to_model.app import api, app
 from warehouse_to_model.decorators import forward_jwt
+from warehouse_to_model.models import get_sample_changes
 
 
 @api.route('/experiments')
@@ -69,37 +70,10 @@ class SampleInfo(Resource):
         response.raise_for_status()
         sample = response.json()
 
-        # Get genotype changes: Collect all genotype changes in the strain lineage
-        def iterate_strain(genotype, strain_id):
-            # FIXME: n+1 requests
-            response = session.get(f"{app.config['WAREHOUSE_API']}/strains/{strain_id}")
-            response.raise_for_status()
-            strain = response.json()
-            genotype = f"{genotype} {strain['genotype']}"
-            if strain['parent_id'] is None:
-                return genotype
-            else:
-                return iterate_strain(genotype, strain['parent_id'])
-        genotype_changes = iterate_strain("", sample['strain_id'])
-
-        # Get measurements
-        response = session.get(f"{app.config['WAREHOUSE_API']}/samples/{sample['id']}/measurements")
-        response.raise_for_status()
-        measurements = response.json()
-
-        # Get medium
-        response = session.get(f"{app.config['WAREHOUSE_API']}/media/{sample['medium_id']}")
-        response.raise_for_status()
-        medium = response.json()
-
-        return {
-            'genotype-changes': genotype_changes,
-            'measurements': measurements,
-            'medium': medium['compounds'],
-        }
+        return get_sample_changes(session, sample)
 
 
-@api.route('/sample/<int:sample_id>/simulate')
+@api.route('/sample/<int:sample_id>/simulate/fluxes')
 class SampleSimulate(Resource):
     """API resource for simulating fluxes for the given sample."""
 
@@ -111,34 +85,7 @@ class SampleSimulate(Resource):
         response.raise_for_status()
         sample = response.json()
 
-        # Get genotype changes: Collect all genotype changes in the strain lineage
-        def iterate_strain(genotype, strain_id):
-            # FIXME: n+1 requests
-            response = session.get(f"{app.config['WAREHOUSE_API']}/strains/{strain_id}")
-            response.raise_for_status()
-            strain = response.json()
-            genotype = f"{genotype} {strain['genotype']}".strip()
-            if strain['parent_id'] is None:
-                return genotype
-            else:
-                return iterate_strain(genotype, strain['parent_id'])
-        genotype_changes = iterate_strain("", sample['strain_id'])
-
-        # Get measurements
-        response = session.get(f"{app.config['WAREHOUSE_API']}/samples/{sample['id']}/measurements")
-        response.raise_for_status()
-        measurements = response.json()
-
-        # Get medium
-        response = session.get(f"{app.config['WAREHOUSE_API']}/media/{sample['medium_id']}")
-        response.raise_for_status()
-        medium = response.json()
-
-        message = {
-            'genotype-changes': genotype_changes,
-            'measurements': measurements,
-            'medium': medium['compounds'],
-        }
+        message = get_sample_changes(session, sample)
 
         if 'objective' in request.json:
             message['objective'] = request.json['objective']
