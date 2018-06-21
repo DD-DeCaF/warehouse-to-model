@@ -15,10 +15,6 @@
 
 """Define data model behaviour."""
 
-import json
-
-from flask import request
-
 from warehouse_to_model.app import app
 
 
