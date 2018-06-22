@@ -83,7 +83,7 @@ class SampleInfo(Resource):
 
 
 @api.route('/sample/<int:sample_id>/simulate/fluxes')
-class SampleSimulate(Resource):
+class SampleSimulateFluxes(Resource):
     """API resource for simulating fluxes for the given sample."""
 
     @forward_jwt
@@ -117,7 +117,7 @@ class SampleSimulate(Resource):
 
 
 @api.route('/sample/<int:sample_id>/simulate/yields')
-class SampleYields(Resource):
+class SampleSimulateYields(Resource):
     """API resource for calculating TMY."""
 
     @forward_jwt
