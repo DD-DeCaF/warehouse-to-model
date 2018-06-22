@@ -126,7 +126,7 @@ class SampleSimulateYields(Resource):
         Return theoretical maximum yields for the given sample.
 
         Apply the changes from the given sample to the given model and return
-        the theoretical maximum yields for the compount measurements in that
+        the theoretical maximum yields for the compound measurements in that
         sample.
         """
         try:
