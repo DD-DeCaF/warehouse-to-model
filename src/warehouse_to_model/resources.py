@@ -149,7 +149,7 @@ class SampleSimulateYields(Resource):
         message = get_sample_changes(session, sample)
         message['to-return'] = ['tmy']
         message['theoretical-objectives'] = [
-            m['id'] for m in message['measurements']],  # TODO: chebi ids
+            m['id'] for m in message['measurements']]  # TODO: chebi ids
         payload = {'message': message}
         logger.info("Requesting TMY simulation from model API")
         logger.debug(f"POST message: {message}")
