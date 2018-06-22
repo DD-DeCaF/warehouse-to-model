@@ -129,6 +129,11 @@ class SampleYields(Resource):
         the theoretical maximum yields for the compount measurements in that
         sample.
         """
+        try:
+            model_id = request.json['model_id']
+        except KeyError:
+            return {'error': "Key 'model_id' missing from JSON body"}, 400
+
         # Get the sample in question
         response = session.get(
             f"{app.config['WAREHOUSE_API']}/samples/{sample_id}")
@@ -140,7 +145,6 @@ class SampleYields(Resource):
         message['theoretical-objectives'] = [
             m['id'] for m in message['measurements']],  # TODO: chebi ids
         payload = {'message': message}
-        response = session.post(f"{app.config['MODEL_API']}/models/"
-                                "{request.json['model_id']}",
+        response = session.post(f"{app.config['MODEL_API']}/models/{model_id}",
                                 data=json.dumps(payload))
         return response.json(), response.status_code
