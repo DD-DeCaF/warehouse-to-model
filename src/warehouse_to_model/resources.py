@@ -16,6 +16,7 @@
 """Implement RESTful API endpoints using resources."""
 
 import json
+import logging
 
 from flask import request
 from flask_restplus import Resource
@@ -23,6 +24,9 @@ from flask_restplus import Resource
 from warehouse_to_model.app import api, app
 from warehouse_to_model.decorators import forward_jwt
 from warehouse_to_model.models import get_sample_changes
+
+
+logger = logging.getLogger(__name__)
 
 
 @api.route('/experiments')
@@ -111,6 +115,8 @@ class SampleSimulateFluxes(Resource):
             message['objective'] = request.json['objective']
 
         payload = {'message': message}
+        logger.info("Requesting flux simulation from model API")
+        logger.debug(f"POST message: {message}")
         response = session.post(f"{app.config['MODEL_API']}/models/{model_id}",
                                 data=json.dumps(payload))
         return response.json(), response.status_code
@@ -145,6 +151,8 @@ class SampleSimulateYields(Resource):
         message['theoretical-objectives'] = [
             m['id'] for m in message['measurements']],  # TODO: chebi ids
         payload = {'message': message}
+        logger.info("Requesting TMY simulation from model API")
+        logger.debug(f"POST message: {message}")
         response = session.post(f"{app.config['MODEL_API']}/models/{model_id}",
                                 data=json.dumps(payload))
         return response.json(), response.status_code

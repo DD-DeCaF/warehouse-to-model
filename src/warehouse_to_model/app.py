@@ -24,6 +24,9 @@ from flask_restplus import Api
 from raven.contrib.flask import Sentry
 
 
+logger = logging.getLogger(__name__)
+
+
 app = Flask(__name__)
 api = Api(
     title="Warehouse to Model",
@@ -51,3 +54,5 @@ def init_app(application, interface):
 
     # Add CORS information for all resources.
     CORS(application)
+
+    logger.info("App initialization complete")

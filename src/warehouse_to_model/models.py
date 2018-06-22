@@ -15,7 +15,12 @@
 
 """Define data model behaviour."""
 
+import logging
+
 from warehouse_to_model.app import app
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_sample_changes(session, sample):
@@ -31,6 +36,8 @@ def get_sample_changes(session, sample):
     """
     # Get genotype changes: Collect all genotype changes in the strain lineage
     def iterate_strain(genotype, strain_id):
+        logger.debug(f"Iterating through strain lineage (strain id: "
+                     f"{strain_id})")
         # FIXME: n+1 requests
         response = session.get(
             f"{app.config['WAREHOUSE_API']}/strains/{strain_id}")
