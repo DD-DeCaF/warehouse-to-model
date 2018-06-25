@@ -32,6 +32,10 @@ spec:
             secretKeyRef:
               name: warehouse-to-model-production
               key: SENTRY_DSN
+        - name: WAREHOUSE_API
+          value: http://warehouse-production/warehouse
+        - name: MODEL_API
+          value: http://model-production
         command: ["gunicorn", "-c", "gunicorn.py", "warehouse_to_model.wsgi:app"]
         resources:
           requests:
@@ -75,6 +79,10 @@ spec:
             secretKeyRef:
               name: warehouse-to-model-staging
               key: SENTRY_DSN
+        - name: WAREHOUSE_API
+          value: http://warehouse-staging/warehouse
+        - name: MODEL_API
+          value: http://model-staging
         command: ["gunicorn", "-c", "gunicorn.py", "warehouse_to_model.wsgi:app"]
         resources:
           requests:
