@@ -18,7 +18,7 @@ services:
       - ENVIRONMENT=${ENVIRONMENT:-development}
       - SCRIPT_NAME=${SCRIPT_NAME}
       - FLASK_APP=src/warehouse_to_model/wsgi.py
-      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:*}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:4200}
       - SENTRY_DSN=${SENTRY_DSN}
       - WAREHOUSE_API=${WAREHOUSE_API:-http://warehouse:8000}
       - MODEL_API=${MODEL_API:-http://model:8000}

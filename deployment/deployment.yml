@@ -26,10 +26,7 @@ spec:
         - name: SCRIPT_NAME
           value: /warehouse-to-model
         - name: ALLOWED_ORIGINS
-          valueFrom:
-            secretKeyRef:
-              name: warehouse-to-model-production
-              key: ALLOWED_ORIGINS
+          value: https://app.dd-decaf.eu,http://localhost:4200
         - name: SENTRY_DSN
           valueFrom:
             secretKeyRef:
@@ -72,10 +69,7 @@ spec:
         - name: SCRIPT_NAME
           value: /warehouse-to-model
         - name: ALLOWED_ORIGINS
-          valueFrom:
-            secretKeyRef:
-              name: warehouse-to-model-production
-              key: ALLOWED_ORIGINS
+          value: https://staging.dd-decaf.eu,http://localhost:4200
         - name: SENTRY_DSN
           valueFrom:
             secretKeyRef:
