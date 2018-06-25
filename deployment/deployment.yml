@@ -23,6 +23,8 @@ spec:
         env:
         - name: ENVIRONMENT
           value: production
+        - name: SCRIPT_NAME
+          value: /warehouse-to-model
         - name: ALLOWED_ORIGINS
           valueFrom:
             secretKeyRef:
@@ -67,6 +69,8 @@ spec:
         env:
         - name: ENVIRONMENT
           value: staging
+        - name: SCRIPT_NAME
+          value: /warehouse-to-model
         - name: ALLOWED_ORIGINS
           valueFrom:
             secretKeyRef:

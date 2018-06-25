@@ -22,6 +22,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restplus import Api
 from raven.contrib.flask import Sentry
+from werkzeug.contrib.fixers import ProxyFix
 
 
 logger = logging.getLogger(__name__)
@@ -39,6 +40,7 @@ def init_app(application, interface):
     """Initialize the main app with config information and routes."""
     from .settings import current_config
     application.config.from_object(current_config())
+    application.wsgi_app = ProxyFix(application.wsgi_app)
 
     # Configure logging
     logging.config.dictConfig(application.config['LOGGING'])
